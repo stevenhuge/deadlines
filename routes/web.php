@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SuperadminController;
+use App\Http\Controllers\TaskController;
 use App\Http\Middleware\AdminOnly;
 use App\Http\Middleware\ClientOnly;
 use App\Http\Middleware\SuperadminOnly;
@@ -35,12 +36,17 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // admin route
     Route::middleware(AdminOnly::class)->group(function () {
-        Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+        Route::get('/admin/dashboard', [TaskController::class, 'admin_index'])->name('admin.dashboard');
+        Route::put('/admin/{task}', [TaskController::class, 'admin_update'])->name('admin.update');
+        Route::get('/admin/{task}/download', [TaskController::class, 'download'])->name('tasks.download');
     });
 
     // client route
     Route::middleware(ClientOnly::class)->group(function () {
-        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/dashboard', [TaskController::class, 'index'])->name('dashboard');
+        Route::get('/tasks/create', [TaskController::class, 'create'])->name('tasks.create');
+        Route::post('/dashboard', [TaskController::class, 'store'])->name('tasks.store');
+        Route::get('/tasks/{task}', [TaskController::class, 'show'])->name('tasks.show');
     });
 });
 
